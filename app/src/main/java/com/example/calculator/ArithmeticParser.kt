@@ -1,9 +1,7 @@
 package com.example.calculator
 
-import kotlin.math.cos
 import kotlin.math.ln
 import kotlin.math.pow
-import kotlin.math.sin
 import kotlin.math.tan
 
 class Tokenizer(private val input: String) {
@@ -86,36 +84,40 @@ fun parseTerm(tokenizer: Tokenizer): Double {
             "%" -> result % factor
             "e" -> Math.E.pow(factor).toString().take(9).toDouble()
             "^" -> result.pow(factor)
-            "log" -> {
-                if (tokenizer.token == "(") {
-                    tokenizer.nextToken()
-                    val base = parseExpression(tokenizer)
-                    val argument = parseExpression(tokenizer)
-                    if (tokenizer.token == ")") {
-                        tokenizer.nextToken()
-                        if (base > 0 && base != 1.0 && argument > 0) {
-                            ln(argument) / ln(base)
-                        } else {
-                            throw IllegalArgumentException("Invalid arguments for logarithmic function")
-                        }
-                    } else {
-                        throw IllegalArgumentException("Missing closing parenthesis after log function")
-                    }
-                } else {
-                    throw IllegalArgumentException("Invalid usage of log function")
-                }
-            }
-
+            "log" -> parseLogFunction(tokenizer)
             else -> throw IllegalStateException("Invalid operator: $op")
         }
     }
     return result
 }
 
-fun parseFactor(tokenizer: Tokenizer): Double {
-    if (tokenizer.token == null) {
-        throw IllegalArgumentException("Missing factor")
+fun parseLogFunction(tokenizer: Tokenizer): Double {
+    tokenizer.nextToken()
+    if (tokenizer.token == "(") {
+        tokenizer.nextToken()
+        val base = parseExpression(tokenizer)
+        if (tokenizer.token == ",") {
+            tokenizer.nextToken()
+            val argument = parseExpression(tokenizer)
+            if (tokenizer.token == ")") {
+                tokenizer.nextToken()
+                if (base > 0 && base != 1.0 && argument > 0) {
+                    return (ln(argument) / ln(base)).toString().take(8).toDouble()
+                } else {
+                    throw IllegalArgumentException("Invalid arguments for logarithmic function")
+                }
+            } else {
+                throw IllegalArgumentException("Missing closing parenthesis after log function")
+            }
+        } else {
+            throw IllegalArgumentException("Missing comma in log function")
+        }
+    } else {
+        throw IllegalArgumentException("Invalid usage of log function")
     }
+}
+
+fun parseFactor(tokenizer: Tokenizer): Double {
     if (tokenizer.token!!.toDoubleOrNull() != null) {
         val value = tokenizer.token!!.toDouble()
         tokenizer.nextToken()
@@ -135,7 +137,13 @@ fun parseFactor(tokenizer: Tokenizer): Double {
         tokenizer.nextToken()
         return Math.E
     }
-    if (tokenizer.token in listOf("tan", "cot", "sin", "cos")) {
+    val trigFunctions = mapOf(
+        "tan" to Math::tan,
+        "cot" to { angle: Double -> 1.0 / tan(angle) },
+        "sin" to Math::sin,
+        "cos" to Math::cos
+    )
+    if (tokenizer.token in trigFunctions.keys) {
         val trigFunc = tokenizer.token!!
         tokenizer.nextToken()
         if (tokenizer.token == "(") {
@@ -143,13 +151,8 @@ fun parseFactor(tokenizer: Tokenizer): Double {
             val angle = parseExpression(tokenizer)
             if (tokenizer.token == ")") {
                 tokenizer.nextToken()
-                return when (trigFunc) {
-                    "tan" -> tan(angle)
-                    "cot" -> 1 / tan(angle)
-                    "sin" -> sin(angle)
-                    "cos" -> cos(angle)
-                    else -> throw IllegalStateException("Invalid trigonometric function: $trigFunc")
-                }
+                val angleInRadians = Math.toRadians(angle)
+                return trigFunctions[trigFunc]!!(angleInRadians)
             } else {
                 throw IllegalArgumentException("Missing closing parenthesis after trigonometric function")
             }
@@ -158,29 +161,7 @@ fun parseFactor(tokenizer: Tokenizer): Double {
         }
     }
     if (tokenizer.token == "log") {
-        tokenizer.nextToken()
-        if (tokenizer.token == "(") {
-            tokenizer.nextToken()
-            val base = parseExpression(tokenizer)
-            if (tokenizer.token == ",") {
-                tokenizer.nextToken()
-                val argument = parseExpression(tokenizer)
-                if (tokenizer.token == ")") {
-                    tokenizer.nextToken()
-                    if (base > 0 && base != 1.0 && argument > 0) {
-                        return (ln(argument) / ln(base)).toString().take(8).toDouble()
-                    } else {
-                        throw IllegalArgumentException("Invalid arguments for logarithmic function")
-                    }
-                } else {
-                    throw IllegalArgumentException("Missing closing parenthesis after log function")
-                }
-            } else {
-                throw IllegalArgumentException("Missing comma in log function")
-            }
-        } else {
-            throw IllegalArgumentException("Invalid usage of log function")
-        }
+        return parseLogFunction(tokenizer)
     }
     if (tokenizer.token == ",") {
         tokenizer.nextToken()
@@ -195,7 +176,6 @@ fun parseFactor(tokenizer: Tokenizer): Double {
         } else {
             throw IllegalArgumentException("Missing closing parenthesis")
         }
-    } else {
-        throw IllegalArgumentException("Invalid factor: ${tokenizer.token}")
     }
+    throw IllegalArgumentException("Invalid factor: ${tokenizer.token}")
 }

@@ -426,7 +426,7 @@ fun CalculatorUI(
                         .aspectRatio(1f)
                         .weight(1f)
                         .clickable {
-                            viewModel.append("e")
+                            viewModel.append("u")
                         }
                 )
                 CalculatorButton(

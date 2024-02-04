@@ -60,7 +60,7 @@ class CalculatorViewModel : ViewModel() {
             }
         } else if (char == "π") {
             if (expression.value.isNotEmpty()) {
-                expression.value = (expression.value.toDouble() * 3.14159265).toString().take(6)
+                expression.value = (expression.value.toDouble() * Math.PI).toString().take(6)
             } else {
                 expression.value = Math.PI.toString().take(6)
             }
@@ -92,15 +92,17 @@ class CalculatorViewModel : ViewModel() {
         } else if (char == "log") {
             if (expression.value.isNotEmpty()) {
                 expression.value += "log("
+            } else{
+                expression.value = "log("
             }
         } else if (char == ")") {
             expression.value += char
-        } else if (char in "tsce") {
+        } else if (char in "tscu") {
             when (char) {
                 "t" -> expression.value += "tan("
                 "c" -> expression.value += "cot("
                 "s" -> expression.value += "sin("
-                "e" -> expression.value += "cos("
+                "u" -> expression.value += "cos("
             }
         }
     }
