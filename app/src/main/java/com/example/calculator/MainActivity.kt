@@ -3,8 +3,10 @@ package com.example.calculator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -76,14 +78,13 @@ fun CalculatorButton(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CalculatorUI(
     viewModel: CalculatorViewModel,
 ) {
     val expression = viewModel.expression
     val buttonSpacing = 8.dp
-
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -127,24 +128,19 @@ fun CalculatorUI(
                 horizontalArrangement = Arrangement.spacedBy(buttonSpacing)
             ) {
                 CalculatorButton(
-                    symbol = "AC",
+                    symbol = "Del/AC",
                     color = Color.Red,
                     modifier = Modifier
                         .aspectRatio(1f)
                         .weight(1f)
-                        .clickable {
-                            viewModel.clear()
-                        }
-                )
-                CalculatorButton(
-                    symbol = "yˣ",
-                    color = Color(0xFF003175),
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .weight(1f)
-                        .clickable {
-                            viewModel.append("^")
-                        }
+                        .combinedClickable(
+                            onClick = {
+                                viewModel.delete()
+                            },
+                            onLongClick = {
+                                viewModel.clear()
+                            },
+                        )
                 )
                 CalculatorButton(
                     symbol = "mod",
@@ -195,13 +191,13 @@ fun CalculatorUI(
                 horizontalArrangement = Arrangement.spacedBy(buttonSpacing)
             ) {
                 CalculatorButton(
-                    symbol = "tan",
+                    symbol = "yˣ",
                     color = Color(0xFF003175),
                     modifier = Modifier
                         .aspectRatio(1f)
                         .weight(1f)
                         .clickable {
-                            viewModel.append("t")
+                            viewModel.append("^")
                         }
                 )
                 CalculatorButton(
@@ -212,6 +208,53 @@ fun CalculatorUI(
                         .weight(1f)
                         .clickable {
                             viewModel.append("√")
+                        }
+                )
+                CalculatorButton(
+                    symbol = "x²",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("x²")
+                        }
+                )
+                CalculatorButton(
+                    symbol = "π",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("π")
+                        }
+                )
+                CalculatorButton(
+                    symbol = "e",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("e")
+                        }
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(buttonSpacing)
+            ) {
+                CalculatorButton(
+                    symbol = "tan",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("t")
                         }
                 )
                 CalculatorButton(
@@ -272,16 +315,6 @@ fun CalculatorUI(
                         }
                 )
                 CalculatorButton(
-                    symbol = "x²",
-                    color = Color(0xFF003175),
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .weight(1f)
-                        .clickable {
-                            viewModel.append("x²")
-                        }
-                )
-                CalculatorButton(
                     symbol = "4",
                     color = Color.Gray,
                     modifier = Modifier
@@ -336,16 +369,6 @@ fun CalculatorUI(
                         .weight(1f)
                         .clickable {
                             viewModel.append("s")
-                        }
-                )
-                CalculatorButton(
-                    symbol = "π",
-                    color = Color(0xFF003175),
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .weight(1f)
-                        .clickable {
-                            viewModel.append("π")
                         }
                 )
                 CalculatorButton(
@@ -407,13 +430,13 @@ fun CalculatorUI(
                         }
                 )
                 CalculatorButton(
-                    symbol = "e",
+                    symbol = "log",
                     color = Color(0xFF003175),
                     modifier = Modifier
                         .aspectRatio(1f)
                         .weight(1f)
                         .clickable {
-                            viewModel.append("e")
+                            viewModel.append("log")
                         }
                 )
                 CalculatorButton(
@@ -427,24 +450,19 @@ fun CalculatorUI(
                         }
                 )
                 CalculatorButton(
-                    symbol = ".",
-                    color = Color.Gray,
+                    symbol = ". / ,",
+                    color = Color(0xFF003175),
                     modifier = Modifier
                         .aspectRatio(1f)
                         .weight(1f)
-                        .clickable {
-                            viewModel.append(".")
-                        }
-                )
-                CalculatorButton(
-                    symbol = "Del",
-                    color = Color.Red,
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .weight(1f)
-                        .clickable {
-                            viewModel.delete()
-                        }
+                        .combinedClickable(
+                            onClick = {
+                                viewModel.append(".")
+                            },
+                            onLongClick = {
+                                viewModel.append(",")
+                            },
+                        )
                 )
                 CalculatorButton(
                     symbol = "=",

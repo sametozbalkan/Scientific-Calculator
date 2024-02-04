@@ -32,7 +32,6 @@ class CalculatorViewModel : ViewModel() {
                     expression.value += char
                 }
             }
-
         } else if (char == "(") {
             if (expression.value.isNotEmpty()) {
                 val lastChar = expression.value.last()
@@ -44,6 +43,12 @@ class CalculatorViewModel : ViewModel() {
         } else if (char == "%") {
             if (expression.value.isNotEmpty()) {
                 expression.value += "%"
+            } else {
+                expression.value = expression.value.dropLast(1)
+            }
+        } else if (char == ",") {
+            if (expression.value.isNotEmpty()) {
+                expression.value += ","
             } else {
                 expression.value = expression.value.dropLast(1)
             }
@@ -83,6 +88,10 @@ class CalculatorViewModel : ViewModel() {
                 }
             } else {
                 expression.value = "e^"
+            }
+        } else if (char == "log") {
+            if (expression.value.isNotEmpty()) {
+                expression.value += "log("
             }
         } else if (char == ")") {
             expression.value += char
