@@ -66,14 +66,33 @@ class CalculatorViewModel : ViewModel() {
             } else {
                 expression.value = expression.value.dropLast(1)
             }
+        } else if (char == "^") {
+            if (expression.value.isNotEmpty()) {
+                val lastChar = expression.value.last()
+                if (lastChar.isDigit() || lastChar == ')') {
+                    expression.value += "^"
+                }
+            }
         } else if (char == "e") {
             if (expression.value.isNotEmpty()) {
-                expression.value += "x" + "e^"
+                val lastChar = expression.value.last()
+                if (lastChar.isDigit() || lastChar == ')') {
+                    expression.value += "×" + "(e^"
+                } else {
+                    expression.value += "(e^"
+                }
             } else {
                 expression.value = "e^"
             }
         } else if (char == ")") {
             expression.value += char
+        } else if (char in "tsce") {
+            when (char) {
+                "t" -> expression.value += "tan("
+                "c" -> expression.value += "cot("
+                "s" -> expression.value += "sin("
+                "e" -> expression.value += "cos("
+            }
         }
     }
 

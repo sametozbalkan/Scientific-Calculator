@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                 val systemUiController = rememberSystemUiController()
                 SideEffect {
                     systemUiController.setSystemBarsColor(
-                        color = Color.DarkGray,
+                        color = Color.Black,
                         darkIcons = false
                     )
 
@@ -79,7 +79,7 @@ fun CalculatorButton(
 @Composable
 fun CalculatorUI(
     viewModel: CalculatorViewModel,
-){
+) {
     val expression = viewModel.expression
     val buttonSpacing = 8.dp
 
@@ -87,7 +87,7 @@ fun CalculatorUI(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.DarkGray)
+            .background(Color.Black)
     ) {
         Column(
             modifier = Modifier
@@ -134,6 +134,16 @@ fun CalculatorUI(
                         .weight(1f)
                         .clickable {
                             viewModel.clear()
+                        }
+                )
+                CalculatorButton(
+                    symbol = "yˣ",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("^")
                         }
                 )
                 CalculatorButton(
@@ -184,6 +194,16 @@ fun CalculatorUI(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(buttonSpacing)
             ) {
+                CalculatorButton(
+                    symbol = "tan",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("t")
+                        }
+                )
                 CalculatorButton(
                     symbol = "√",
                     color = Color(0xFF003175),
@@ -242,6 +262,16 @@ fun CalculatorUI(
                 horizontalArrangement = Arrangement.spacedBy(buttonSpacing)
             ) {
                 CalculatorButton(
+                    symbol = "cot",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("c")
+                        }
+                )
+                CalculatorButton(
                     symbol = "x²",
                     color = Color(0xFF003175),
                     modifier = Modifier
@@ -299,6 +329,16 @@ fun CalculatorUI(
                 horizontalArrangement = Arrangement.spacedBy(buttonSpacing)
             ) {
                 CalculatorButton(
+                    symbol = "sin",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("s")
+                        }
+                )
+                CalculatorButton(
                     symbol = "π",
                     color = Color(0xFF003175),
                     modifier = Modifier
@@ -353,9 +393,19 @@ fun CalculatorUI(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp,end = 16.dp,bottom = 16.dp),
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(buttonSpacing)
             ) {
+                CalculatorButton(
+                    symbol = "cos",
+                    color = Color(0xFF003175),
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
+                        .clickable {
+                            viewModel.append("e")
+                        }
+                )
                 CalculatorButton(
                     symbol = "e",
                     color = Color(0xFF003175),
