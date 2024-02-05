@@ -45,7 +45,6 @@ class MainActivity : ComponentActivity() {
                         color = Color.Black,
                         darkIcons = false
                     )
-
                 }
                 CalculatorUI(
                     viewModel = viewModel,
@@ -149,7 +148,7 @@ fun CalculatorUI(
                         .aspectRatio(1f)
                         .weight(1f)
                         .clickable {
-                            viewModel.append("%")
+                            viewModel.append("mod")
                         }
                 )
                 CalculatorButton(
@@ -172,7 +171,6 @@ fun CalculatorUI(
                             viewModel.append(")")
                         }
                 )
-
                 CalculatorButton(
                     symbol = "÷",
                     color = Color(0xFF003175),
@@ -387,7 +385,6 @@ fun CalculatorUI(
                     modifier = Modifier
                         .aspectRatio(1f)
                         .weight(1f)
-
                         .clickable {
                             viewModel.append("2")
                         }

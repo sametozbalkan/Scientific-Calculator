@@ -1,5 +1,6 @@
 package com.example.calculator
 
+import kotlin.math.PI
 import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.tan
@@ -24,7 +25,7 @@ class Tokenizer(private val input: String) {
             token = sb.toString()
             return
         }
-        if ("+-×÷()%^e".contains(input[pos])) {
+        if ("+-×÷()%^eπ".contains(input[pos])) {
             token = input[pos].toString()
             pos++
             return
@@ -47,12 +48,13 @@ class Tokenizer(private val input: String) {
                 return
             }
         }
-        throw IllegalArgumentException("Invalid character: ${input[pos]}")
+        throw IllegalArgumentException("Geçersiz karakter: ${input[pos]}")
     }
 }
 
 fun evaluate(expression: String): Double {
-    val tokenizer = Tokenizer(expression)
+    val expressionWithMod = expression.replace("mod", "%")
+    val tokenizer = Tokenizer(expressionWithMod)
     tokenizer.nextToken()
     return parseExpression(tokenizer)
 }
@@ -66,7 +68,7 @@ fun parseExpression(tokenizer: Tokenizer): Double {
         result = when (op) {
             "+" -> result + term
             "-" -> result - term
-            else -> throw IllegalStateException("Invalid operator: $op")
+            else -> throw IllegalStateException("Geçersiz operatör: $op")
         }
     }
     return result
@@ -85,7 +87,7 @@ fun parseTerm(tokenizer: Tokenizer): Double {
             "e" -> Math.E.pow(factor).toString().take(9).toDouble()
             "^" -> result.pow(factor)
             "log" -> parseLogFunction(tokenizer)
-            else -> throw IllegalStateException("Invalid operator: $op")
+            else -> throw IllegalStateException("Geçersiz operatör: $op")
         }
     }
     return result
@@ -104,16 +106,16 @@ fun parseLogFunction(tokenizer: Tokenizer): Double {
                 if (base > 0 && base != 1.0 && argument > 0) {
                     return (ln(argument) / ln(base)).toString().take(8).toDouble()
                 } else {
-                    throw IllegalArgumentException("Invalid arguments for logarithmic function")
+                    throw IllegalArgumentException("Log fonksiyonunda geçersiz kullanım")
                 }
             } else {
-                throw IllegalArgumentException("Missing closing parenthesis after log function")
+                throw IllegalArgumentException("Log fonksiyonunda eksik parantez")
             }
         } else {
-            throw IllegalArgumentException("Missing comma in log function")
+            throw IllegalArgumentException("Log fonksiyonunda eksik virgül")
         }
     } else {
-        throw IllegalArgumentException("Invalid usage of log function")
+        throw IllegalArgumentException("Geçersiz log fonksiyonu kullanımı")
     }
 }
 
@@ -130,12 +132,16 @@ fun parseFactor(tokenizer: Tokenizer): Double {
         return when (op) {
             "+" -> +factor
             "-" -> -factor
-            else -> throw IllegalStateException("Invalid operator: $op")
+            else -> throw IllegalStateException("Geçersiz operatör: $op")
         }
     }
     if (tokenizer.token == "e") {
         tokenizer.nextToken()
         return Math.E
+    }
+    if (tokenizer.token == "π") {
+        tokenizer.nextToken()
+        return PI
     }
     val trigFunctions = mapOf(
         "tan" to Math::tan,
@@ -154,10 +160,10 @@ fun parseFactor(tokenizer: Tokenizer): Double {
                 val angleInRadians = Math.toRadians(angle)
                 return trigFunctions[trigFunc]!!(angleInRadians)
             } else {
-                throw IllegalArgumentException("Missing closing parenthesis after trigonometric function")
+                throw IllegalArgumentException("Trigonometrik fonksiyonda eksik parantez")
             }
         } else {
-            throw IllegalArgumentException("Invalid usage of trigonometric function: $trigFunc")
+            throw IllegalArgumentException("Geçersiz trigonometrik fonksiyon kullanımı: $trigFunc")
         }
     }
     if (tokenizer.token == "log") {
@@ -174,8 +180,8 @@ fun parseFactor(tokenizer: Tokenizer): Double {
             tokenizer.nextToken()
             return value
         } else {
-            throw IllegalArgumentException("Missing closing parenthesis")
+            throw IllegalArgumentException("Eksik parantez")
         }
     }
-    throw IllegalArgumentException("Invalid factor: ${tokenizer.token}")
+    throw IllegalArgumentException("Geçersiz faktör: ${tokenizer.token}")
 }
