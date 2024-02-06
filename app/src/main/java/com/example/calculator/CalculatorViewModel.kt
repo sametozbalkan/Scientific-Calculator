@@ -35,11 +35,15 @@ class CalculatorViewModel : ViewModel() {
         } else if (char == "(") {
             if (expression.value.isNotEmpty()) {
                 val lastChar = expression.value.last()
-                if (lastChar !in "+-×÷") {
-                    expression.value += "×"
+                if (lastChar.isDigit()) {
+                    expression.value += "×("
+                }else{
+                    expression.value += "("
                 }
+
+            }else{
+                expression.value = char
             }
-            expression.value += char
         } else if (char == "mod") {
             if (expression.value.isNotEmpty()) {
                 expression.value += "mod"
